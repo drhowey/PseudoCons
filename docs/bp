@@ -1,0 +1,7 @@
+pdflatex pseudocons.tex
+
+bibtex pseudocons
+
+pdflatex pseudocons.tex
+
+pdflatex pseudocons.tex

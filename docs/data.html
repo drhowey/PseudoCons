@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PseudoCons: Generating Case/Pseudocontrol Data from Pedigree Data!</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="stylesheet" type="text/css" href="pseudoconsstyles.css" />
+<link rel="shortcut icon" href="favicon.ico" />
+</head>
+<body>
+<!-- Begin Wrapper -->
+<div id="wrapper">
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr><td>
+<!-- Begin Header -->
+<div id="header">
+<table><tr>
+<td>
+<img width="250" src="pseudoconslogo.png" alt="PseudoCons: Generating Case/Pseudocontrol Data from Pedigree Data!"/>
+</td>
+<td>
+<p style="margin-left: 1em;">PseudoCons: Generating Case/Pseudocontrol Data from Pedigree Data!</p>
+</td></tr>
+</table>
+</div>
+<!-- End Header -->
+<!-- Begin Menu Navigation -->
+<ul id="menunav">
+<li><a href="index.html">Home</a></li>
+<li><a href="download.html">Download</a></li>
+<li><a href="contact.html">Contact</a></li>
+</ul>
+<!-- End Menu Navigation -->
+
+</td></tr>
+<tr><td>
+<table border="0" cellpadding="0" cellspacing="0"><tr>
+<td valign="top">
+<!-- Begin Left Column -->
+<div id="leftcolumn">
+<!-- Begin Contents Navigation -->
+<div id="navcontainer">
+<ul>
+<li><a href="introduction.html">1 Introduction</a>
+</li>
+<li><a href="installation.html">2 Installation</a>
+</li>
+<li><a href="using.html">3 Using PseudoCons</a>
+<ul>
+<li><a href="using.html#basic-usage">3.1 Basic Usage</a></li>
+<li><a href="using.html#options">3.2 Options</a></li>
+<li><a href="using.html#parameterfile">3.3 Parameter file</a></li>
+<li><a href="using.html#input">3.4 Input</a></li>
+<li><a href="using.html#output">3.5 Output</a></li>
+</ul>
+</li>
+<li><a href="data.html">4 Data Processing</a>
+<ul>
+<li><a href="data.html#trios">4.1 Trio Selection</a></li>
+<li><a href="data.html#pseudocons1">4.2 One Pseudocontrol</a></li>
+<li><a href="data.html#pseudocons3">4.3 Three Pseudocontrols</a></li>
+<li><a href="data.html#pseudocons15">4.4 Fifteen Pseudocontrols</a></li>
+<li><a href="data.html#cpg-cepg">4.5 CPG and CEPG</a></li>
+<li><a href="data.html#info-file">4.6 Information File</a></li>
+</ul>
+</li>
+<li><a href="example.html">5 PseudoCons Examples</a>
+<ul>
+<li><a href="example.html#eg-pseudocons1">5.1 One Pseudocontrol</a></li>
+<li><a href="example.html#eg-pseudocons3">5.2 Three Pseudocontrols</a></li>
+<li><a href="example.html#eg-pseudocons15">5.3 Fifteen Pseudocontrols</a></li>
+<li><a href="example.html#eg-proband">5.4 Proband</a></li>
+<li><a href="example.html#eg-extratrios">5.5 Extra Trios</a></li>
+</ul>
+</li>
+<li><a href="references.html">References</a></li>
+</ul>
+</div>
+<!-- End Contents Navigation -->
+</div>
+<!-- End Left Column -->
+</td>
+<td valign="top">
+<!-- Begin Right Column -->
+<div id="rightcolumn">
+<h1>4 Data Processing</h1>
+<p>
+This section explains how PseudoCons processes the pedigree data to produce the case-control output data. </p>
+<h2><a name="trios">4.1 Trio Selection</a></h2>
+<p>
+By default one case/parent trio is taken from each pedigree and from this one case is taken and one pseudocontrol created. The trio chosen is simply decided by the first case in the pedigree file who also has two parents in the pedigree file. </p>
+<h3><a name="proband">Proband</a></h3>
+<p>
+It may be possible that there is a choice of case/parent trios from a pedigree to give the case and created pseudocontrol. For a pedigree file with many large pedigrees this could potentially alter the results of any subsequent analysis performed. For example, if pedigrees are ascertained on the basis of a particular affected child, but case/parent trios containing the parents and grandparents are chosen instead, this could then bias the analysis. With this in mind it is possible to supply an optional <i>proband</i> file containing a list of all the affected subjects that are of interest. The file is a list of subjects given by the pedigree name and subject name coresponding to the pedigree file given to PseudoCons. For example, a proband file may look as following: </p>
+<pre>
+1 4
+2 5
+3 2
+5 12
+7 3
+9 3
+10 2
+</pre>
+<p>
+The proband file is used in PseudoCons with the <tt>-pro</tt> option as follows: </p>
+<pre>
+./pseudocons -pro proband.dat -i mydata.bed -o mycasepscondata.bed
+</pre>
+<p>
+The name of the proband file should following immediately after the <tt>-pb</tt> option. The following points should be noted about proband files: </p>
+<ol>
+<li>
+If a proband file is given it is not necessary to supply a subject for every pedigree. For example, for smaller pedigrees you may be happy to use the default setting. </li><li>
+The proband subjects do not need to appear in any particular order in the file. </li><li>
+If the proband subject is not affected a warning message will be displayed and the pedigree processed using the default settings. </li><li>
+If a proband subject does not exist in the pedigree file a warning message will be displayed and the pedigree file will be processed as normal.</li>
+</ol>
+<h3><a name="extratrios">Extra Trios</a></h3>
+<p>
+It is possible to use all possible case/parent trios from a pedigree, counting them as if they are independent, using the <tt>-xtrio</tt> option. The trios may overlap if a parent is also a case. Depending on the analysis you want to do, this assumption may be more or less valid. </p>
+<h2><a name="pseudocons1">4.2 One Pseudocontrol</a></h2>
+<p>
+The pseudocontrols are created using the non-transmitted alleles. For example, if the alleles of the case are A/A and the alleles of the parents are A/G and A/G, then the created pseudocontrol will have alleles G/G. </p>
+<h2><a name="pseudocons3">4.3 Three Pseudocontrols</a></h2>
+<p>
+The three pseudocontrols are created using any possible genotype from the parents that contains a non-transmitted alleles. For example, if the alleles of the case are A/A and the alleles of the parents are A/G and A/G, then the three created pseudocontrols will have alleles G/G, A/G and G/A. </p>
+<h2><a name="pseudocons15">4.4 Fifteen Pseudocontrols</a></h2>
+<p>
+Given two SNPs, the 15 pseudocontrols are created using any possible genotype pair from the parents that contains a non-transmitted allele. </p>
+<h2><a name="cpg-cepg">4.5 CPG and CEPG</a></h2>
+<p>
+The standard procedure for <tt>PseudoCons</tt> is to assume Conditional on Parental Genotypes (CPG) rather than the Conditional on Exchangeable Parental Genotypes (CEPG) [<a href="references.html#cordell:04">Cordell (2004)</a>, <a href="references.html#weinberg:shi:09">Weinberg and Shi (2009)</a>]. It is also possible to assume CEPG with the option <tt>-cepg</tt> which will create an additional set of pseudocontrols, resulting in 3, 7 and 31 pseudocontrols for options <tt>-pc1</tt>, <tt>-pc3</tt> and <tt>-pc15</tt> respectively. </p>
+<p>
+Using options <tt>-pc1 -cepg</tt> will result in the following pseudocontrols: (i) the usual pseudocontrol with the non-transmitted genotype; and (ii) the parental genotypes swapped to give a pseudocontrol for the non-transmitted genotype and a pseudocontrol for the transmitted genotype. </p>
+<p>
+Using options <tt>-pc3 -cepg</tt> will result in the following pseudocontrols: (i) the usual 3 pseudocontrols with a genotype containing a non-transmitted allele; and (ii) the parental genotypes swapped to give another 4 pseudocontrols given by the possible transmitted genotypes. </p>
+<p>
+Using options <tt>-pc15 -cepg</tt> will result in the following pseudocontrols: (i) the usual 15 pseudocontrols given by any possible genotype pair from the parents that contains a non-transmitted allele; and (ii) the parental genotypes swapped to give another 16 pseudocontrols given by any possible genotype pair. </p>
+<p>
+When the <tt>-cepg</tt> option is used the log file will include the following lines: </p>
+<pre>
+...
+Number of pseudocontrols per trio: 1 + 2 = 3
+Using Conditional on Exchangeable Parental Genotypes (CEPG)
+...
+</pre>
+<p>
+showing the amended number of pseudocontrols and that CEPG has been assumed. If an infomation file is output when using the <tt>-cepg</tt> option then the extra pseudocontrols created will have the maternal and paternal genotypes exchanged. So for options <tt>-pc1</tt>, <tt>-pc3</tt> and <tt>-pc15</tt> the pseudocontrols 2-3, 4-7 and 16-31 will have maternal and paternal genotypes exchanged respectively. </p>
+<p>
+<b>Warning:</b> the options <tt>-pc3</tt> and <tt>-pc1 -cepg</tt> both result in 3 pseudocontrols but are different. Do not get the two mixed up! </p>
+<h2><a name="info-file">4.6 Information File</a></h2>
+<p>
+It is possible to output an extra information file for follow up analysis. If the option <tt>-info info.dat</tt> is used then the text file <tt>info.dat</tt> is output with the following columns: </p>
+<ol>
+<li>
+<b>Family ID</b>. The same family ID as in the <tt>.bim</tt> file. </li><li>
+<b>Individual ID</b>. The same individual ID as in the <tt>.bim</tt> file. </li><li>
+<b>Case ID</b>. The corresponding case ID (child ID) for the pseudocontrol (or case ID repeated). </li><li>
+<b>Set ID</b>. An ordinal number assigned to each set of pseudocons derived from the same case/parent trio.</li>
+</ol>
+<p>
+If the option <tt>-info-ma info.dat</tt> is used then the text file <tt>info.dat</tt> also includes the following genotype information columns: </p>
+<ol>
+<li>
+<b>Mother Genotypes</b>. Each of the SNPs will have 2 columns denoting the genotype given by the two allele names. </li><li>
+<b>Case ID</b>. Following the mother genotypes are the case genotypes.</li>
+</ol>
+<p>
+If the option <tt>-info-fa info.dat</tt> is used then the text file <tt>info.dat</tt> also includes the following genotype information columns: </p>
+<ol>
+<li>
+<b>Father Genotypes</b>. Each of the SNPs will have 2 columns denoting the genotype given by the two allele names. </li><li>
+<b>Case ID</b>. Following the father genotypes are the case genotypes.</li>
+</ol>
+<p>
+If the option <tt>-info-fama info.dat</tt> is used then the text file <tt>info.dat</tt> also includes the following genotype information columns: </p>
+<ol>
+<li>
+<b>Father Genotypes</b>. Each of the SNPs will have 2 columns denoting the genotype given by the two allele names. </li><li>
+<b>Mother Genotypes</b>. Following the father genotypes are the mother genotypes. </li><li>
+<b>Case ID</b>. Following the mother genotypes are the case genotypes.</li>
+</ol>
+<p>
+The resultant text file may be very large if many SNPs are included, so a maximum number of 20 SNPs is imposed. This can be changed with the <tt>-info-maxsnps</tt> option. The log file includes information on the exact numbers of the columns for the genotypes. For example, if the <tt>-info-ma info.dat</tt> option were used with 10 SNPs the log file will include the lines: </p>
+<pre>
+...
+Info file: info.dat
+    Column 1: family ID
+    Column 2: individual ID
+    Column 3: corresponding case ID
+    Column 4: pseudocontrol set ID
+    Columns 5-24: mother genotype info
+    Columns 25-44: child/pseudocontrol genotype info
+...
+</pre>
+<p>
+The information file will then look something like the following (using <tt>-pc1</tt> with allele names 1 and 2): </p>
+<pre>
+10001 3 3 1 1 1 2 2 1 1 1 1 2 2 1 1 1 1 1 1 1 1 1 1 1 1 2 1 2 1 2 1 2 1 2 1 1 1 1 1 1 1 1 1
+10001 3-pseudo-1 3 1 1 1 2 2 1 1 1 1 2 2 1 1 1 1 1 1 1 1 1 1 1 1 2 1 1 1 1 1 2 2 1 1 1 1 1 1 1 1 1 1
+10002 3 3 2 1 1 2 2 1 1 1 1 2 2 1 1 1 1 1 1 1 1 1 1 1 1 2 1 2 1 2 1 2 1 2 1 1 1 1 1 1 1 1 1
+10002 3-pseudo-1 3 2 1 1 2 2 1 1 1 1 2 2 1 1 1 1 1 1 1 1 1 1 1 1 2 1 2 1 2 1 2 1 2 1 1 1 1 1 1 1 2 1
+10003 3 3 3 1 1 1 1 2 1 2 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+10003 3-pseudo-1 3 3 1 1 1 1 2 1 2 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 2 1 2 1 2 1 2 1 1 1 1 1 1 1 1 1
+...
+</pre>
+<br />
+<div class="prevnext"><span class="left"><a href="using.html">&lt;-prev</a>
+</span><span class="right"><a href="example.html">next-&gt;</a>
+</span></div><!-- End Right Column -->
+</div>
+</td>
+</tr></table>
+<!-- End Wrapper -->
+</td></tr></table>
+</div>
+ <!-- Start of StatCounter Code for Default Guide --> <script type="text/javascript"> var sc_project=8964391; var sc_invisible=1; var sc_security="6b1d6a18"; var scJsHost = (("https:" == document.location.protocol) ? "https://secure." : "http://www."); document.write("<sc"+"ript type='text/javascript' src='" + scJsHost+ "statcounter.com/counter/counter.js'></"+"script>"); </script> <noscript><div class="statcounter"><a title="web counter" href="http://statcounter.com/" target="_blank"><img class="statcounter" src="http://c.statcounter.com/8964391/0/6b1d6a18/1/" alt="web counter"></a></div></noscript> <!-- End of StatCounter Code for Default Guide</body>
+</html>

@@ -1,0 +1,654 @@
+\documentclass[a4paper,12pt]{article}
+\setcounter{secnumdepth}{2}
+\newcommand{\code}[1]{{\footnotesize{{\tt #1}}}}
+\usepackage{natbib}
+\usepackage{color}
+\usepackage{graphicx}
+\addtolength{\textwidth}{2cm} % a = -2b, where this is a and below is b
+\addtolength{\hoffset}{-1cm}
+\addtolength{\textheight}{2cm} % c = -d, where this is c and d is below
+\addtolength{\voffset}{-2cm}
+\begin{document}
+\title{PseudoCons: Generating Case/Pseudocontrol Data from Pedigree Data!}
+\date{}
+\author{}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+\section{Introduction}
+\label{introduction}
+
+Do you desperately want to perform a case/control analysis but only have pedigree data? If each pedigree contains a case with parents then one option is to take the cases and create pseudocontrols using the non-transmitted alleles from the parents. The case/control analysis of interest can then be performed using the case/pseudocontrol data set. Unfortunately, creating the pseudocontrols can be a hassle, especially if the pedigree data does not consist of only case/parent trios. However, it is no longer a hassle as \code{PseudoCons} is here to help! Simply run \code{PseudoCons} on your pedigree data set to create a case/pseudocontrol data set. 
+
+Some theory behind case/pseudocontrol analysis can be found in the work by \citet{cordell:04} and \citet{cordell:etal:04}. 
+
+%================== End of section "introduction"==================
+
+\section{Installation}
+\label{installation}
+
+Download an executable file from the download$\:$page for your system and off you go, or do the following. 
+\begin{enumerate}
+
+\item Download the code from the download page. 
+\item Compile it by typing something like the following: \begin{verbatim}g++ -O3 *.cpp -o pseudocons \end{verbatim}
+
+\item Start creating case/control binary pedigree files with PseudoCons!\end{enumerate}
+
+%================== End of section "installation"==================
+
+\section{Using PseudoCons}
+\label{using}
+\subsection{Basic Usage}
+\label{basic-usage}
+
+The program PseudoCons takes a PLINK binary pedigree file as input and outputs a PLINK binary pedigree file: 
+\begin{verbatim}
+./pseudocons -i mydata.bed -o pseudoData.bed
+\end{verbatim}
+
+This requires that the corresponding \code{.bim} and \code{.fam}, files are also available. A text PLINK pedigree file, \code{.ped}, with corresponding map file, \code{.map}, may be used to create a binary file using PLINK as follows: \begin{verbatim}
+plink --noweb --file mydata --make-bed --out mydata
+\end{verbatim}
+
+
+This will create the binary pedigree file, \code{mydata.bed}, map file, \code{mydata.bim}, and family file, \code{mydata.fam} required for use with PseudoCons. 
+
+If for some reason you should wish to have a text PLINK pedigree file, this can be created using PLINK as follows: 
+\begin{verbatim}
+plink --noweb --bfile pseudoData --make-bed --out pseudoData --recode
+\end{verbatim}
+
+This will create the text PLINK pedigree file \code{pseudoData.ped} with map file \code{pseudoData.map}. 
+
+%============ End of subsection "basic-usage"============
+
+\subsection{Options}
+\label{options}
+
+Typing \code{pseudocons} with no options will output usage details: 
+\begin{verbatim}
+PseudoCons: pseudocontrols from pedigree data v1.0
+--------------------------------------------------
+Copyright 2013 Richard Howey, GNU General Public License, v3
+Institute of Genetic Medicine, Newcastle University
+
+Usage:
+         ./pseudocons [options] inputFile
+ or ./pseudocons -pf parameterfile
+
+Options:
+  -i filename         -- input filename
+  -o filename         -- output filename
+  -pc1                -- one pseudocontrol per trio
+  -pc3                -- three pseudocontrols per trio
+  -pc15               -- 15 pseudocontrols per trio (2 SNP interaction only)
+  -snpnos snp1 snp2   -- SNP numbers of pair to create 15 pseudocontrols per trio
+  -snpnames snp1 snp2 -- as above using SNP names
+  -pro                -- proband filename
+  -xtrio              -- allow extra trios
+  -log                -- log filename
+  -so                 -- suppress output to screen
+
+Default options:
+  -pc1
+  -log PseudoCons.log
+\end{verbatim}
+
+%============ End of subsection "options"============
+
+\subsection{Parameter file}
+\label{parameterfile}
+
+A parameter file, \code{.pf}, may be used with PseudoCons instead of writing all of the options on the command line. To use a parameter file simply type: 
+\begin{verbatim}
+./pseudocons myparameters.pf
+\end{verbatim}
+
+The parameter file should be a text file with one option written on each line. For example, to perform the analysis above the file \code{myparameters.pf} would be as follows: 
+\begin{verbatim}
+-i mydata.bed
+-o myCasePseudoControlData.bed
+-log myLog.log
+-so
+\end{verbatim}
+
+It is also possible to add comments to the file provided that the ``-'' character is not used, and to comment out any options by placing another character in front of any ``-''. For example, the above parameter file could be edited as follows to perform the next analysis given above: 
+\begin{verbatim}
+This is in input file from my really great study
+-i mydata.bed
+
+This will be my case/pseudocontrol data file
+-o myCasePseudoControlData.bed
+
+Keep a log of the PseudoCons output here
+-log myLog.log
+
+Suppress the output from the screen
+-so
+\end{verbatim}
+
+%============ End of subsection "parameterfile"============
+
+\subsection{Input}
+\label{input}
+
+The following file types are input into PseudoCons: 
+
+{\begin{center}\begin{tabular}{ll}
+File  & Description\\
+\hline
+.bed  & binary PLINK file\\
+.bim  & extended map file with allele names\\
+.fam  & family pedigree PLINK file\\
+\end{tabular}\end{center}}
+
+%============ End of subsection "input"============
+
+\subsection{Output}
+\label{output}
+
+The following file types are output from PseudoCons: 
+
+{\begin{center}\begin{tabular}{ll}
+File  & Description\\
+\hline
+.bed  & binary PLINK file\\
+.bim  & extended map file with allele names\\
+.fam  & family pedigree PLINK file\\
+.log  & log file of PseudoCons\\
+\end{tabular}\end{center}}
+
+%============ End of subsection "output"============
+
+
+%================== End of section "using"==================
+
+\section{Data Processing}
+\label{data}
+
+This section explains how PseudoCons processes the pedigree data to produce the case-control output data. 
+\subsection{Trio Selection}
+\label{trios}
+
+By default one case/parent trio is taken from each pedigree and from this one case is taken and one pseudocontrol created. The trio chosen is simply decided by the first case in the pedigree file who also has two parents in the pedigree file. 
+\subsubsection{Proband}
+\label{proband}
+
+It may be possible that there is a choice of case/parent trios from a pedigree to give the case and created pseudocontrol. For a pedigree file with many large pedigrees this could potentially alter the results of any subsequent analysis performed. For example, if pedigrees are ascertained on the basis of a particular affected child, but case/parent trios containing the parents and grandparents are chosen instead, this could then bias the analysis. With this in mind it is possible to supply an optional {\it proband} file containing a list of all the affected subjects that are of interest. The file is a list of subjects given by the pedigree number and subject number coresponding to the pedigree file given to PseudoCons. For example, a proband file may look as following: 
+\begin{verbatim}
+1 4
+2 5
+3 2
+5 12
+7 3
+9 3
+10 2
+\end{verbatim}
+
+The proband file is used in PseudoCons with the \code{-pro} option as follows: 
+\begin{verbatim}
+./pseudocons -pro proband.dat -i mydata.bed -o mycasepscondata.bed
+\end{verbatim}
+
+The name of the proband file should following immediately after the \code{-pb} option. The following points should be noted about proband files: 
+\begin{enumerate}
+
+\item If a proband file is given it is not necessary to supply a subject for every pedigree. For example, for smaller pedigrees you may be happy to use the default setting. 
+\item The proband subjects do not need to appear in any particular order in the file. 
+\item If the proband subject is not affected a warning message will be displayed and the pedigree processed using the default settings. 
+\item If a proband subject does not exist in the pedigree file a warning message will be displayed and the pedigree file will be processed as normal.\end{enumerate}
+
+%====== End of subsubsection "proband"======
+
+\subsubsection{Extra Trios}
+\label{extratrios}
+
+It is possible to use all possible case/parent trios from a pedigree, counting them as if they are independent, using the \code{-xtrio} option. The trios may overlap if a parent is also a case. Depending on the analysis you want to do, this assumption may be more or less valid. 
+
+%====== End of subsubsection "extratrios"======
+
+
+%============ End of subsection "trios"============
+
+\subsection{One Pseudocontrol}
+\label{pseudocons1}
+
+The pseudocontrols are created using the non-transmitted alleles. For example, if the alleles of the case are A/A and the alleles of the parents are A/G and A/G, then the created pseudocontrol will have alleles G/G. 
+
+%============ End of subsection "pseudocons1"============
+
+\subsection{Three Pseudocontrols}
+\label{pseudocons3}
+
+The three pseudocontrols are created using any possible genotype from the parents that contains a non-transmitted alleles. For example, if the alleles of the case are A/A and the alleles of the parents are A/G and A/G, then the three created pseudocontrols will have alleles G/G, A/G and G/A. 
+
+%============ End of subsection "pseudocons3"============
+
+\subsection{Fifteen Pseudocontrols}
+\label{pseudocons15}
+
+Given two SNPs, the 15 pseudocontrols are created using any possible genotype pair from the parents that contains a non-transmitted allele. 
+
+%============ End of subsection "pseudocons15"============
+
+
+%================== End of section "data"==================
+
+\section{PseudoCons Examples}
+\label{example}
+
+The different options of PseudoCons are demostrated using the example data set (included in the PseudoCons download) in the following examples. The example data set consists of 100 pedigrees where the first 50 are case/parent trios, the next 25 case/parent trios with an extra sibling, and the next 25 case/parent trios where the parents of the mother of the case is also included. There are 10 SNPs in the data set with allele names A and G. 
+\subsection{One Pseudocontrol}
+\label{eg-pseudocons1}
+
+To produce one pseudocontrol per case-parent trio type the following: 
+\begin{verbatim}
+./pseudocons -i examplePsConsData.bed -o myCasePseudocontrols.bed
+\end{verbatim}
+
+or 
+\begin{verbatim}
+./pseudocons -pc1 -i examplePsConsData.bed -o myCasePseudocontrols.bed
+\end{verbatim}
+
+This will create screen output similar to the following: 
+\begin{verbatim}
+PseudoCons: pseudocontrols from pedigree data v1.0
+--------------------------------------------------
+Copyright 2013 Richard Howey, GNU General Public License, v3
+Institute of Genetic Medicine, Newcastle University
+
+Parameters:
+Input file: examplePsConsData.bed
+Output file: myCasePseudocontrols.bed
+Log file: PseudoCons.log
+Number of pseudocontrols per trio: 1
+
+Number of subjects: 375
+          Males: 188 (50.1333%)
+          Females: 187 (49.8667%)
+          Unknown sex: 0 (0%)
+          Affected: 133 (35.4667%)
+          Unaffected: 242 (64.5333%)
+Number of SNPs: 10
+
+Number of pedigrees: 100
+Mean pedigree size: 3.75
+Standard deviation of pedigree size: 0.833333
+
+Number of trios used to create pseudocontrols: 100
+Number of pedigrees with no pseudocontrols: 0
+
+Number of cases: 100
+          Males: 39 (39%)
+          Females: 61 (61%)
+          Unknown sex: 0 (0%)
+
+Number of pseudocontrols: 100
+          Males: 39 (39%)
+          Females: 61 (61%)
+          Unknown sex: 0 (0%)
+
+Run time: less than one second
+\end{verbatim}
+
+The screen output will also be saved to the log file, by default \code{PseudoCons.log}, but can be set using the \code{-log} option. The case/pseudocontrol files output are the binary pedigree plink files PLINK \code{myCasePseudocontrols.bed}, \code{myCasePseudocontrols.bim} and \code{myCasePseudocontrols.fam}. The created binary pedigree family file is as follows: 
+\begin{verbatim}
+1 3 0 0 1 2
+1 3-pseudo-1 0 0 1 1
+2 3 0 0 2 2
+2 3-pseudo-1 0 0 2 1
+3 3 0 0 2 2
+3 3-pseudo-1 0 0 2 1
+4 3 0 0 1 2
+4 3-pseudo-1 0 0 1 1
+5 3 0 0 1 2
+5 3-pseudo-1 0 0 1 1
+6 3 0 0 1 2
+6 3-pseudo-1 0 0 1 1
+7 3 0 0 1 2
+7 3-pseudo-1 0 0 1 1
+...
+\end{verbatim}
+
+The file consists of one case from each pedigree and one created pseudocontrol. The pedigree ID in the first column is repeated and the pseudocontrol subject ID is taken from the subject case ID with ``pseudo-1'' appended to it. 
+
+The created binary map file, \code{myCasePseudocontrols.bim}, is simply a repeat of the original binary map file since the used SNPs have not changed, which is: 
+\begin{verbatim}
+1 rs1 0 1000 G A
+1 rs2 0 2000 G A
+1 rs3 0 3000 G A
+1 rs4 0 4000 G A
+2 rs5 0 10000 G A
+2 rs6 0 20000 G A
+2 rs7 0 30000 G A
+3 rs8 0 16000 G A
+3 rs9 0 32000 G A
+3 rs10 0 48000 G A
+\end{verbatim}
+
+%============ End of subsection "eg-pseudocons1"============
+
+\subsection{Three Pseudocontrols}
+\label{eg-pseudocons3}
+
+To produce three pseudocontrols per case-parent trio type the following: 
+\begin{verbatim}
+./pseudocons -pc3 -i examplePsConsData.bed -o myCasePseudocontrols.bed
+\end{verbatim}
+
+This will create screen output very similar to creating one pseudocontrol: 
+\begin{verbatim}
+PseudoCons: pseudocontrols from pedigree data v1.0
+--------------------------------------------------
+Copyright 2013 Richard Howey, GNU General Public License, v3
+Institute of Genetic Medicine, Newcastle University
+
+Parameters:
+Input file: releases/examplePsConsData.bed
+Output file: myCasePseudocontrols3.bed
+Log file: PseudoCons.log
+Number of pseudocontrols per trio: 3
+
+Number of subjects: 375
+          Males: 188 (50.1333%)
+          Females: 187 (49.8667%)
+          Unknown sex: 0 (0%)
+          Affected: 133 (35.4667%)
+          Unaffected: 242 (64.5333%)
+Number of SNPs: 10
+
+Number of pedigrees: 100
+Mean pedigree size: 3.75
+Standard deviation of pedigree size: 0.833333
+
+Number of trios used to create pseudocontrols: 100
+Number of pedigrees with no pseudocontrols: 0
+
+Number of cases: 100
+          Males: 39 (39%)
+          Females: 61 (61%)
+          Unknown sex: 0 (0%)
+
+Number of pseudocontrols: 300
+          Males: 117 (39%)
+          Females: 183 (61%)
+          Unknown sex: 0 (0%)
+
+Run time: less than one second
+\end{verbatim}
+
+This time the created binary pedigree family file is as follows: 
+\begin{verbatim}
+1 3 0 0 1 2
+1 3-pseudo-1 0 0 1 1
+1 3-pseudo-2 0 0 1 1
+1 3-pseudo-3 0 0 1 1
+2 3 0 0 2 2
+2 3-pseudo-1 0 0 2 1
+2 3-pseudo-2 0 0 2 1
+2 3-pseudo-3 0 0 2 1
+3 3 0 0 2 2
+3 3-pseudo-1 0 0 2 1
+3 3-pseudo-2 0 0 2 1
+3 3-pseudo-3 0 0 2 1
+4 3 0 0 1 2
+4 3-pseudo-1 0 0 1 1
+4 3-pseudo-2 0 0 1 1
+4 3-pseudo-3 0 0 1 1
+5 3 0 0 1 2
+5 3-pseudo-1 0 0 1 1
+5 3-pseudo-2 0 0 1 1
+5 3-pseudo-3 0 0 1 1
+...
+\end{verbatim}
+
+The file consists of one case from each pedigree and three created pseudocontrols. The pedigree ID in the first column is repeated and the pseudocontrol subject IDs are taken from the subject case ID with ``pseudo-1'', ``pseudo-2'' and ``pseudo-3'' appended to it. Note that the sex of the case is repeated in the pseudocontrols. 
+
+As before the created binary map file, \code{.bim}, is the same. 
+
+%============ End of subsection "eg-pseudocons3"============
+
+\subsection{Fifteen Pseudocontrols}
+\label{eg-pseudocons15}
+
+To produce fifteen pseudocontrols per case-parent trio based on the non-transmitted allele combinations from two SNPs type the following: 
+\begin{verbatim}
+./pseudocons -pc15 -snpnames rs1 rs3 -i examplePsConsData.bed -o myCasePseudocontrols15.bed
+\end{verbatim}
+
+where the option \code{-snpnames rs1 rs3} picks the two SNPs to be consider using the SNP names. The SNPs can also be choosen by the order in which the SNPs appear in the file, so to choose the 1st and 3rd SNPs in the file type the following: 
+\begin{verbatim}
+./pseudocons -pc15 -snpnos 1 3 -i examplePsConsData.bed -o myCasePseudocontrols15.bed
+\end{verbatim}
+
+This will output to screen something similar to: 
+\begin{verbatim}
+PseudoCons: pseudocontrols from pedigree data v1.0
+--------------------------------------------------
+Copyright 2013 Richard Howey, GNU General Public License, v3
+Institute of Genetic Medicine, Newcastle University
+
+Parameters:
+Input file: examplePsConsData.bed
+Output file: myCasePseudocontrols15.bed
+Log file: PseudoCons.log
+Interaction using SNP names rs1 and rs3
+Number of pseudocontrols per trio: 15
+
+Number of subjects: 375
+          Males: 188 (50.1333%)
+          Females: 187 (49.8667%)
+          Unknown sex: 0 (0%)
+          Affected: 133 (35.4667%)
+          Unaffected: 242 (64.5333%)
+Number of SNPs: 10
+
+Number of pedigrees: 100
+Mean pedigree size: 3.75
+Standard deviation of pedigree size: 0.833333
+
+Number of trios used to create pseudocontrols: 100
+Number of pedigrees with no pseudocontrols: 0
+
+Number of cases: 100
+          Males: 39 (39%)
+          Females: 61 (61%)
+          Unknown sex: 0 (0%)
+
+Number of pseudocontrols: 1500
+          Males: 585 (39%)
+          Females: 915 (61%)
+          Unknown sex: 0 (0%)
+
+Run time: less than one second
+\end{verbatim}
+
+This time the created binary pedigree family file is as follows: 
+\begin{verbatim}
+1 3 0 0 1 2
+1 3-pseudo-1 0 0 1 1
+1 3-pseudo-2 0 0 1 1
+1 3-pseudo-3 0 0 1 1
+1 3-pseudo-4 0 0 1 1
+1 3-pseudo-5 0 0 1 1
+1 3-pseudo-6 0 0 1 1
+1 3-pseudo-7 0 0 1 1
+1 3-pseudo-8 0 0 1 1
+1 3-pseudo-9 0 0 1 1
+1 3-pseudo-10 0 0 1 1
+1 3-pseudo-11 0 0 1 1
+1 3-pseudo-12 0 0 1 1
+1 3-pseudo-13 0 0 1 1
+1 3-pseudo-14 0 0 1 1
+1 3-pseudo-15 0 0 1 1
+2 3 0 0 2 2
+2 3-pseudo-1 0 0 2 1
+2 3-pseudo-2 0 0 2 1
+2 3-pseudo-3 0 0 2 1
+2 3-pseudo-4 0 0 2 1
+2 3-pseudo-5 0 0 2 1
+2 3-pseudo-6 0 0 2 1
+2 3-pseudo-7 0 0 2 1
+2 3-pseudo-8 0 0 2 1
+2 3-pseudo-9 0 0 2 1
+2 3-pseudo-10 0 0 2 1
+2 3-pseudo-11 0 0 2 1
+2 3-pseudo-12 0 0 2 1
+2 3-pseudo-13 0 0 2 1
+2 3-pseudo-14 0 0 2 1
+2 3-pseudo-15 0 0 2 1
+...
+\end{verbatim}
+
+The file consists of one case from each pedigree and 15 created pseudocontrols, one for each pair of allele combinations from the two SNPs that were not transmitted. The pedigree ID in the first column is repeated and the pseudocontrol subject IDs are taken from the subject case ID with ``pseudo-i'' appended to it for the ith pseudocontrol. Note that the sex of the case is repeated in the pseudocontrols. 
+
+This time the created binary map file, \code{myCasePseudocontrols15.bim}, only consists of the two SNPs used to create the pseudocontrols. 
+\begin{verbatim}
+1 rs1 0 1000 G A
+1 rs3 0 3000 G A
+\end{verbatim}
+
+The created binary pedigree, \code{myCasePseudocontrols15.bed}, also only consists of data with these two SNPs. 
+
+%============ End of subsection "eg-pseudocons15"============
+
+\subsection{Proband}
+\label{eg-proband}
+
+To choose which cases are chosen from a pedigree a proband file may be used as follows: 
+\begin{verbatim}
+./pseudocons  -pro proband.dat -i examplePsConsData.bed -o myCasePseudocontrolsPro.bed
+\end{verbatim}
+
+The proband file is a list of pedigree IDs and subject IDs. The example proband file is as follows: 
+\begin{verbatim}
+1 3
+2 3
+3 3
+4 3
+5 3
+...
+73 3
+74 3
+75 3
+76 5
+77 5
+78 5
+...
+99 5
+100 5
+\end{verbatim}
+
+This will create screen output similar to the following: 
+\begin{verbatim}
+PseudoCons: pseudocontrols from pedigree data v1.0
+--------------------------------------------------
+Copyright 2013 Richard Howey, GNU General Public License, v3
+Institute of Genetic Medicine, Newcastle University
+
+Parameters:
+Input file: releases/examplePsConsData.bed
+Output file: myCasePseudocontrolsPro.bed
+Log file: PseudoCons.log
+Number of pseudo controls per trio: 1
+Proband file: releases/proband.dat
+
+Number of subjects: 375
+          Males: 188 (50.1333%)
+          Females: 187 (49.8667%)
+          Unknown sex: 0 (0%)
+          Affected: 133 (35.4667%)
+          Unaffected: 242 (64.5333%)
+Number of SNPs: 10
+
+Number of pedigrees: 100
+Mean pedigree size: 3.75
+Standard deviation of pedigree size: 0.833333
+
+Number of trios used to create pseudo controls: 100
+Number of pedigrees with no pseudo controls: 0
+
+Number of cases: 100
+          Males: 48 (48%)
+          Females: 52 (52%)
+          Unknown sex: 0 (0%)
+
+Number of pseudo controls: 100
+          Males: 48 (48%)
+          Females: 52 (52%)
+          Unknown sex: 0 (0%)
+
+Run time: less than one second
+\end{verbatim}
+
+Note that the number of males and females are different to previous due to different cases being chosen. The sex ratio is about 1 due to the proband file ensuring that affect offspring are chosen rather than affected mothers, which is poosible for the last group of pedigrees where the parents of the mother are also included. 
+
+For more on probands see  section \ref{proband}. 
+
+%============ End of subsection "eg-proband"============
+
+\subsection{Extra Trios}
+\label{eg-extratrios}
+
+It is possible to use more than one case/parent trio from each pedigree by using the \code{-xtrio} as follows: 
+\begin{verbatim}
+./pseudocons -xtrio -i examplePsConsData.bed -o myCasePseudocontrolsX.bed
+\end{verbatim}
+
+This will create screen output similar to the following: 
+\begin{verbatim}
+PseudoCons: pseudocontrols from pedigree data v1.0
+--------------------------------------------------
+Copyright 2013 Richard Howey, GNU General Public License, v3
+Institute of Genetic Medicine, Newcastle University
+
+Parameters:
+Input file: releases/examplePsConsData.bed
+Output file: myCasePseudocontrolsPro.bed
+Log file: PseudoCons.log
+Number of pseudocontrols per trio: 1
+Allowing extra trios
+
+Number of subjects: 375
+          Males: 188 (50.1333%)
+          Females: 187 (49.8667%)
+          Unknown sex: 0 (0%)
+          Affected: 133 (35.4667%)
+          Unaffected: 242 (64.5333%)
+Number of SNPs: 10
+
+Number of pedigrees: 100
+Mean pedigree size: 3.75
+Standard deviation of pedigree size: 0.833333
+
+Number of trios used to create pseudocontrols: 133
+Number of pedigrees with no pseudocontrols: 0
+
+Number of cases: 133
+          Males: 58 (43.609%)
+          Females: 75 (56.391%)
+          Unknown sex: 0 (0%)
+
+Number of pseudocontrols: 133
+          Males: 58 (43.609%)
+          Females: 75 (56.391%)
+          Unknown sex: 0 (0%)
+
+Run time: less than one second
+\end{verbatim}
+
+Note that in this output there are 118 case/parent trios used to create the pseudocontrol data, but only 100 pedigrees. The extra 33 trios were taken from pedigrees containing more than one case/parent trio. This option will taken as many case/parent trios from one pedigree as possible, but for this example data set takes no more than 2 per pedigree. The number of pedigrees with no available case/parent trios are also reported, which for this data example data set is zero. 
+
+Extra care should be taken in interpreting any subsequent analysis using this option. 
+
+%============ End of subsection "eg-extratrios"============
+
+
+%================== End of section "example"==================
+
+\bibliographystyle{genepi}
+\bibliography{/home/nrajh/work-other/tex/biblio}
+\end{document}

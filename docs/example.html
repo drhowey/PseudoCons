@@ -1,0 +1,483 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>PseudoCons: Generating Case/Pseudocontrol Data from Pedigree Data!</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="stylesheet" type="text/css" href="pseudoconsstyles.css" />
+<link rel="shortcut icon" href="favicon.ico" />
+</head>
+<body>
+<!-- Begin Wrapper -->
+<div id="wrapper">
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr><td>
+<!-- Begin Header -->
+<div id="header">
+<table><tr>
+<td>
+<img width="250" src="pseudoconslogo.png" alt="PseudoCons: Generating Case/Pseudocontrol Data from Pedigree Data!"/>
+</td>
+<td>
+<p style="margin-left: 1em;">PseudoCons: Generating Case/Pseudocontrol Data from Pedigree Data!</p>
+</td></tr>
+</table>
+</div>
+<!-- End Header -->
+<!-- Begin Menu Navigation -->
+<ul id="menunav">
+<li><a href="index.html">Home</a></li>
+<li><a href="download.html">Download</a></li>
+<li><a href="contact.html">Contact</a></li>
+</ul>
+<!-- End Menu Navigation -->
+
+</td></tr>
+<tr><td>
+<table border="0" cellpadding="0" cellspacing="0"><tr>
+<td valign="top">
+<!-- Begin Left Column -->
+<div id="leftcolumn">
+<!-- Begin Contents Navigation -->
+<div id="navcontainer">
+<ul>
+<li><a href="introduction.html">1 Introduction</a>
+</li>
+<li><a href="installation.html">2 Installation</a>
+</li>
+<li><a href="using.html">3 Using PseudoCons</a>
+<ul>
+<li><a href="using.html#basic-usage">3.1 Basic Usage</a></li>
+<li><a href="using.html#options">3.2 Options</a></li>
+<li><a href="using.html#parameterfile">3.3 Parameter file</a></li>
+<li><a href="using.html#input">3.4 Input</a></li>
+<li><a href="using.html#output">3.5 Output</a></li>
+</ul>
+</li>
+<li><a href="data.html">4 Data Processing</a>
+<ul>
+<li><a href="data.html#trios">4.1 Trio Selection</a></li>
+<li><a href="data.html#pseudocons1">4.2 One Pseudocontrol</a></li>
+<li><a href="data.html#pseudocons3">4.3 Three Pseudocontrols</a></li>
+<li><a href="data.html#pseudocons15">4.4 Fifteen Pseudocontrols</a></li>
+<li><a href="data.html#cpg-cepg">4.5 CPG and CEPG</a></li>
+<li><a href="data.html#info-file">4.6 Information File</a></li>
+</ul>
+</li>
+<li><a href="example.html">5 PseudoCons Examples</a>
+<ul>
+<li><a href="example.html#eg-pseudocons1">5.1 One Pseudocontrol</a></li>
+<li><a href="example.html#eg-pseudocons3">5.2 Three Pseudocontrols</a></li>
+<li><a href="example.html#eg-pseudocons15">5.3 Fifteen Pseudocontrols</a></li>
+<li><a href="example.html#eg-proband">5.4 Proband</a></li>
+<li><a href="example.html#eg-extratrios">5.5 Extra Trios</a></li>
+</ul>
+</li>
+<li><a href="references.html">References</a></li>
+</ul>
+</div>
+<!-- End Contents Navigation -->
+</div>
+<!-- End Left Column -->
+</td>
+<td valign="top">
+<!-- Begin Right Column -->
+<div id="rightcolumn">
+<h1>5 PseudoCons Examples</h1>
+<p>
+The different options of PseudoCons are demostrated using the example data set (included in the PseudoCons download) in the following examples. The example data set consists of 100 pedigrees where the first 50 are case/parent trios, the next 25 case/parent trios with an extra sibling, and the next 25 case/parent trios where the parents of the mother of the case is also included. There are 10 SNPs in the data set with allele names A and G. </p>
+<h2><a name="eg-pseudocons1">5.1 One Pseudocontrol</a></h2>
+<p>
+To produce one pseudocontrol per case-parent trio type the following: </p>
+<pre>
+./pseudocons -i examplePsConsData.bed -o myCasePseudocontrols.bed
+</pre>
+<p>
+or </p>
+<pre>
+./pseudocons -pc1 -i examplePsConsData.bed -o myCasePseudocontrols.bed
+</pre>
+<p>
+This will create screen output similar to the following: </p>
+<pre>
+PseudoCons: pseudocontrols from pedigree data v1.0
+--------------------------------------------------
+Copyright 2013 Richard Howey, GNU General Public License, v3
+Institute of Genetic Medicine, Newcastle University
+
+Parameters:
+Input file: examplePsConsData.bed
+Output file: myCasePseudocontrols.bed
+Log file: PseudoCons.log
+Number of pseudocontrols per trio: 1
+
+Number of subjects: 375
+          Males: 188 (50.1333%)
+          Females: 187 (49.8667%)
+          Unknown sex: 0 (0%)
+          Affected: 133 (35.4667%)
+          Unaffected: 242 (64.5333%)
+Number of SNPs: 10
+
+Number of pedigrees: 100
+Mean pedigree size: 3.75
+Standard deviation of pedigree size: 0.833333
+
+Number of trios used to create pseudocontrols: 100
+Number of pedigrees with no pseudocontrols: 0
+
+Number of cases: 100
+          Males: 39 (39%)
+          Females: 61 (61%)
+          Unknown sex: 0 (0%)
+
+Number of pseudocontrols: 100
+          Males: 39 (39%)
+          Females: 61 (61%)
+          Unknown sex: 0 (0%)
+
+Run time: less than one second
+</pre>
+<p>
+The screen output will also be saved to the log file, by default <tt>PseudoCons.log</tt>, but can be set using the <tt>-log</tt> option. The case/pseudocontrol files output are the binary pedigree plink files PLINK <tt>myCasePseudocontrols.bed</tt>, <tt>myCasePseudocontrols.bim</tt> and <tt>myCasePseudocontrols.fam</tt>. The created binary pedigree family file is as follows: </p>
+<pre>
+1 3 0 0 1 2
+1 3-pseudo-1 0 0 1 1
+2 3 0 0 2 2
+2 3-pseudo-1 0 0 2 1
+3 3 0 0 2 2
+3 3-pseudo-1 0 0 2 1
+4 3 0 0 1 2
+4 3-pseudo-1 0 0 1 1
+5 3 0 0 1 2
+5 3-pseudo-1 0 0 1 1
+6 3 0 0 1 2
+6 3-pseudo-1 0 0 1 1
+7 3 0 0 1 2
+7 3-pseudo-1 0 0 1 1
+...
+</pre>
+<p>
+The file consists of one case from each pedigree and one created pseudocontrol. The pedigree ID in the first column is repeated and the pseudocontrol subject ID is taken from the subject case ID with &ldquo;pseudo-1&rdquo; appended to it. </p>
+<p>
+The created binary map file, <tt>myCasePseudocontrols.bim</tt>, is simply a repeat of the original binary map file since the used SNPs have not changed, which is: </p>
+<pre>
+1 rs1 0 1000 G A
+1 rs2 0 2000 G A
+1 rs3 0 3000 G A
+1 rs4 0 4000 G A
+2 rs5 0 10000 G A
+2 rs6 0 20000 G A
+2 rs7 0 30000 G A
+3 rs8 0 16000 G A
+3 rs9 0 32000 G A
+3 rs10 0 48000 G A
+</pre>
+<h2><a name="eg-pseudocons3">5.2 Three Pseudocontrols</a></h2>
+<p>
+To produce three pseudocontrols per case-parent trio type the following: </p>
+<pre>
+./pseudocons -pc3 -i examplePsConsData.bed -o myCasePseudocontrols.bed
+</pre>
+<p>
+This will create screen output very similar to creating one pseudocontrol: </p>
+<pre>
+PseudoCons: pseudocontrols from pedigree data v1.0
+--------------------------------------------------
+Copyright 2013 Richard Howey, GNU General Public License, v3
+Institute of Genetic Medicine, Newcastle University
+
+Parameters:
+Input file: releases/examplePsConsData.bed
+Output file: myCasePseudocontrols3.bed
+Log file: PseudoCons.log
+Number of pseudocontrols per trio: 3
+
+Number of subjects: 375
+          Males: 188 (50.1333%)
+          Females: 187 (49.8667%)
+          Unknown sex: 0 (0%)
+          Affected: 133 (35.4667%)
+          Unaffected: 242 (64.5333%)
+Number of SNPs: 10
+
+Number of pedigrees: 100
+Mean pedigree size: 3.75
+Standard deviation of pedigree size: 0.833333
+
+Number of trios used to create pseudocontrols: 100
+Number of pedigrees with no pseudocontrols: 0
+
+Number of cases: 100
+          Males: 39 (39%)
+          Females: 61 (61%)
+          Unknown sex: 0 (0%)
+
+Number of pseudocontrols: 300
+          Males: 117 (39%)
+          Females: 183 (61%)
+          Unknown sex: 0 (0%)
+
+Run time: less than one second
+</pre>
+<p>
+This time the created binary pedigree family file is as follows: </p>
+<pre>
+1 3 0 0 1 2
+1 3-pseudo-1 0 0 1 1
+1 3-pseudo-2 0 0 1 1
+1 3-pseudo-3 0 0 1 1
+2 3 0 0 2 2
+2 3-pseudo-1 0 0 2 1
+2 3-pseudo-2 0 0 2 1
+2 3-pseudo-3 0 0 2 1
+3 3 0 0 2 2
+3 3-pseudo-1 0 0 2 1
+3 3-pseudo-2 0 0 2 1
+3 3-pseudo-3 0 0 2 1
+4 3 0 0 1 2
+4 3-pseudo-1 0 0 1 1
+4 3-pseudo-2 0 0 1 1
+4 3-pseudo-3 0 0 1 1
+5 3 0 0 1 2
+5 3-pseudo-1 0 0 1 1
+5 3-pseudo-2 0 0 1 1
+5 3-pseudo-3 0 0 1 1
+...
+</pre>
+<p>
+The file consists of one case from each pedigree and three created pseudocontrols. The pedigree ID in the first column is repeated and the pseudocontrol subject IDs are taken from the subject case ID with &ldquo;pseudo-1&rdquo;, &ldquo;pseudo-2&rdquo; and &ldquo;pseudo-3&rdquo; appended to it. Note that the sex of the case is repeated in the pseudocontrols. </p>
+<p>
+As before the created binary map file, <tt>.bim</tt>, is the same. </p>
+<h2><a name="eg-pseudocons15">5.3 Fifteen Pseudocontrols</a></h2>
+<p>
+To produce fifteen pseudocontrols per case-parent trio based on the non-transmitted allele combinations from two SNPs type the following: </p>
+<pre>
+./pseudocons -pc15 -snpnames rs1 rs3 -i examplePsConsData.bed -o myCasePseudocontrols15.bed
+</pre>
+<p>
+where the option <tt>-snpnames rs1 rs3</tt> picks the two SNPs to be consider using the SNP names. The SNPs can also be choosen by the order in which the SNPs appear in the file, so to choose the 1st and 3rd SNPs in the file type the following: </p>
+<pre>
+./pseudocons -pc15 -snpnos 1 3 -i examplePsConsData.bed -o myCasePseudocontrols15.bed
+</pre>
+<p>
+This will output to screen something similar to: </p>
+<pre>
+PseudoCons: pseudocontrols from pedigree data v1.0
+--------------------------------------------------
+Copyright 2013 Richard Howey, GNU General Public License, v3
+Institute of Genetic Medicine, Newcastle University
+
+Parameters:
+Input file: examplePsConsData.bed
+Output file: myCasePseudocontrols15.bed
+Log file: PseudoCons.log
+Interaction using SNP names rs1 and rs3
+Number of pseudocontrols per trio: 15
+
+Number of subjects: 375
+          Males: 188 (50.1333%)
+          Females: 187 (49.8667%)
+          Unknown sex: 0 (0%)
+          Affected: 133 (35.4667%)
+          Unaffected: 242 (64.5333%)
+Number of SNPs: 10
+
+Number of pedigrees: 100
+Mean pedigree size: 3.75
+Standard deviation of pedigree size: 0.833333
+
+Number of trios used to create pseudocontrols: 100
+Number of pedigrees with no pseudocontrols: 0
+
+Number of cases: 100
+          Males: 39 (39%)
+          Females: 61 (61%)
+          Unknown sex: 0 (0%)
+
+Number of pseudocontrols: 1500
+          Males: 585 (39%)
+          Females: 915 (61%)
+          Unknown sex: 0 (0%)
+
+Run time: less than one second
+</pre>
+<p>
+This time the created binary pedigree family file is as follows: </p>
+<pre>
+1 3 0 0 1 2
+1 3-pseudo-1 0 0 1 1
+1 3-pseudo-2 0 0 1 1
+1 3-pseudo-3 0 0 1 1
+1 3-pseudo-4 0 0 1 1
+1 3-pseudo-5 0 0 1 1
+1 3-pseudo-6 0 0 1 1
+1 3-pseudo-7 0 0 1 1
+1 3-pseudo-8 0 0 1 1
+1 3-pseudo-9 0 0 1 1
+1 3-pseudo-10 0 0 1 1
+1 3-pseudo-11 0 0 1 1
+1 3-pseudo-12 0 0 1 1
+1 3-pseudo-13 0 0 1 1
+1 3-pseudo-14 0 0 1 1
+1 3-pseudo-15 0 0 1 1
+2 3 0 0 2 2
+2 3-pseudo-1 0 0 2 1
+2 3-pseudo-2 0 0 2 1
+2 3-pseudo-3 0 0 2 1
+2 3-pseudo-4 0 0 2 1
+2 3-pseudo-5 0 0 2 1
+2 3-pseudo-6 0 0 2 1
+2 3-pseudo-7 0 0 2 1
+2 3-pseudo-8 0 0 2 1
+2 3-pseudo-9 0 0 2 1
+2 3-pseudo-10 0 0 2 1
+2 3-pseudo-11 0 0 2 1
+2 3-pseudo-12 0 0 2 1
+2 3-pseudo-13 0 0 2 1
+2 3-pseudo-14 0 0 2 1
+2 3-pseudo-15 0 0 2 1
+...
+</pre>
+<p>
+The file consists of one case from each pedigree and 15 created pseudocontrols, one for each pair of allele combinations from the two SNPs that were not transmitted. The pedigree ID in the first column is repeated and the pseudocontrol subject IDs are taken from the subject case ID with &ldquo;pseudo-i&rdquo; appended to it for the ith pseudocontrol. Note that the sex of the case is repeated in the pseudocontrols. </p>
+<p>
+This time the created binary map file, <tt>myCasePseudocontrols15.bim</tt>, only consists of the two SNPs used to create the pseudocontrols. </p>
+<pre>
+1 rs1 0 1000 G A
+1 rs3 0 3000 G A
+</pre>
+<p>
+The created binary pedigree, <tt>myCasePseudocontrols15.bed</tt>, also only consists of data with these two SNPs. </p>
+<h2><a name="eg-proband">5.4 Proband</a></h2>
+<p>
+To choose which cases are chosen from a pedigree a proband file may be used as follows: </p>
+<pre>
+./pseudocons  -pro proband.dat -i examplePsConsData.bed -o myCasePseudocontrolsPro.bed
+</pre>
+<p>
+The proband file is a list of pedigree IDs and subject IDs. The example proband file is as follows: </p>
+<pre>
+1 3
+2 3
+3 3
+4 3
+5 3
+...
+73 3
+74 3
+75 3
+76 5
+77 5
+78 5
+...
+99 5
+100 5
+</pre>
+<p>
+This will create screen output similar to the following: </p>
+<pre>
+PseudoCons: pseudocontrols from pedigree data v1.0
+--------------------------------------------------
+Copyright 2013 Richard Howey, GNU General Public License, v3
+Institute of Genetic Medicine, Newcastle University
+
+Parameters:
+Input file: releases/examplePsConsData.bed
+Output file: myCasePseudocontrolsPro.bed
+Log file: PseudoCons.log
+Number of pseudo controls per trio: 1
+Proband file: releases/proband.dat
+
+Number of subjects: 375
+          Males: 188 (50.1333%)
+          Females: 187 (49.8667%)
+          Unknown sex: 0 (0%)
+          Affected: 133 (35.4667%)
+          Unaffected: 242 (64.5333%)
+Number of SNPs: 10
+
+Number of pedigrees: 100
+Mean pedigree size: 3.75
+Standard deviation of pedigree size: 0.833333
+
+Number of trios used to create pseudo controls: 100
+Number of pedigrees with no pseudo controls: 0
+
+Number of cases: 100
+          Males: 48 (48%)
+          Females: 52 (52%)
+          Unknown sex: 0 (0%)
+
+Number of pseudo controls: 100
+          Males: 48 (48%)
+          Females: 52 (52%)
+          Unknown sex: 0 (0%)
+
+Run time: less than one second
+</pre>
+<p>
+Note that the number of males and females are different to previous due to different cases being chosen. The sex ratio is about 1 due to the proband file ensuring that affect offspring are chosen rather than affected mothers, which is poosible for the last group of pedigrees where the parents of the mother are also included. </p>
+<p>
+For more on probands see <a href="data.html#proband">section 4.1.1</a>. </p>
+<h2><a name="eg-extratrios">5.5 Extra Trios</a></h2>
+<p>
+It is possible to use more than one case/parent trio from each pedigree by using the <tt>-xtrio</tt> as follows: </p>
+<pre>
+./pseudocons -xtrio -i examplePsConsData.bed -o myCasePseudocontrolsX.bed
+</pre>
+<p>
+This will create screen output similar to the following: </p>
+<pre>
+PseudoCons: pseudocontrols from pedigree data v1.0
+--------------------------------------------------
+Copyright 2013 Richard Howey, GNU General Public License, v3
+Institute of Genetic Medicine, Newcastle University
+
+Parameters:
+Input file: releases/examplePsConsData.bed
+Output file: myCasePseudocontrolsPro.bed
+Log file: PseudoCons.log
+Number of pseudocontrols per trio: 1
+Allowing extra trios
+
+Number of subjects: 375
+          Males: 188 (50.1333%)
+          Females: 187 (49.8667%)
+          Unknown sex: 0 (0%)
+          Affected: 133 (35.4667%)
+          Unaffected: 242 (64.5333%)
+Number of SNPs: 10
+
+Number of pedigrees: 100
+Mean pedigree size: 3.75
+Standard deviation of pedigree size: 0.833333
+
+Number of trios used to create pseudocontrols: 133
+Number of pedigrees with no pseudocontrols: 0
+
+Number of cases: 133
+          Males: 58 (43.609%)
+          Females: 75 (56.391%)
+          Unknown sex: 0 (0%)
+
+Number of pseudocontrols: 133
+          Males: 58 (43.609%)
+          Females: 75 (56.391%)
+          Unknown sex: 0 (0%)
+
+Run time: less than one second
+</pre>
+<p>
+Note that in this output there are 118 case/parent trios used to create the pseudocontrol data, but only 100 pedigrees. The extra 33 trios were taken from pedigrees containing more than one case/parent trio. This option will taken as many case/parent trios from one pedigree as possible, but for this example data set takes no more than 2 per pedigree. The number of pedigrees with no available case/parent trios are also reported, which for this data example data set is zero. </p>
+<p>
+Extra care should be taken in interpreting any subsequent analysis using this option. </p>
+<br />
+<div class="prevnext"><span class="left"><a href="data.html">&lt;-prev</a>
+</span></div><!-- End Right Column -->
+</div>
+</td>
+</tr></table>
+<!-- End Wrapper -->
+</td></tr></table>
+</div>
+ <!-- Start of StatCounter Code for Default Guide --> <script type="text/javascript"> var sc_project=8964391; var sc_invisible=1; var sc_security="6b1d6a18"; var scJsHost = (("https:" == document.location.protocol) ? "https://secure." : "http://www."); document.write("<sc"+"ript type='text/javascript' src='" + scJsHost+ "statcounter.com/counter/counter.js'></"+"script>"); </script> <noscript><div class="statcounter"><a title="web counter" href="http://statcounter.com/" target="_blank"><img class="statcounter" src="http://c.statcounter.com/8964391/0/6b1d6a18/1/" alt="web counter"></a></div></noscript> <!-- End of StatCounter Code for Default Guide</body>
+</html>

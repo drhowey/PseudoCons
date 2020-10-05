@@ -1,0 +1,4 @@
+/home/nrajh/code/hat-docs/hatdocs -f statcounter.txt pseudocons.hat /home/nrajh/work-other/tex/biblio.bib
+
+#/home/nrajh/code/hat-docs/hatdocs pseudocons.hat /home/nrajh/work-other/tex/biblio.bib
+
